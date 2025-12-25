@@ -1,131 +1,155 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Loader2, Edit2, Trash2 } from "lucide-react";
+import EditArticleDialog from "@/components/articles/EditArticleDialog";
+import ConfirmDeleteDialog from "@/components/articles/ConfirmDeleteDialog";
 import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner";
 
 export default function ArticlesPage() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [name, setName] = useState("");
-  const [sku, setSku] = useState("");
-  const [category, setCategory] = useState("");
-  const [price, setPrice] = useState("");
+  // dialogs state
+  const [editingArticle, setEditingArticle] = useState(null); // article object or null
+  const [deletingArticle, setDeletingArticle] = useState(null); // article object or null
 
   async function loadArticles() {
+    setLoading(true);
     try {
       const res = await fetch("http://localhost:5000/api/articles");
+      if (!res.ok) throw new Error("Erreur API");
       const data = await res.json();
       setArticles(data);
-    } catch (error) {
-      console.error("Erreur fetch articles :", error);
-      toast.error("Erreur lors du chargement des articles");
+    } catch (err) {
+      console.error(err);
+      toast.error("Impossible de charger les articles");
     } finally {
       setLoading(false);
     }
   }
 
-  async function addArticle() {
-  try {
-    const res = await fetch("http://localhost:5000/api/articles", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, sku, category, price_tnd: price })
-    });
-
-    // debug logs -> on veut voir TOUT (status + body)
-    const text = await res.text().catch(()=>null);
-    console.log("DEBUG POST /api/articles -> status:", res.status, "ok:", res.ok, "text:", text);
-
-    // Try parse JSON if possible
-    let json = null;
-    try { json = JSON.parse(text); } catch(e) {}
-
-    if (!res.ok) {
-      console.error("API ERROR:", res.status, json || text);
-      toast.error("Impossible d'ajouter l’article (" + (json?.error || res.status) + ")");
-      return;
-    }
-
-    toast.success("Article ajouté !");
-    // refresh list
-    loadArticles();
-    // clear fields
-    setName(""); setSku(""); setCategory(""); setPrice("");
-  } catch (err) {
-    console.error("FETCH CATCH ERROR:", err);
-    toast.error("Erreur réseau — vérifie la console");
-  }
-}
-
-
   useEffect(() => {
     loadArticles();
   }, []);
 
+  // delete helper
+  async function handleDeleteConfirmed(id) {
+  try {
+    const res = await fetch(`http://localhost:5000/api/articles/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      const msg = data?.details || data?.error || "Impossible de supprimer";
+      throw new Error(msg);
+    }
+
+    toast.success("Article supprimé");
+    setDeletingArticle(null);
+    loadArticles();
+
+  } catch (err) {
+    console.error(err);
+    toast.error(err.message);
+  }
+}
+
+
+  // update helper called from EditArticleDialog via prop onSaved
+  function onArticleSaved() {
+    setEditingArticle(null);
+    loadArticles();
+  }
+
   return (
     <div className="p-6">
-      <Toaster />
-
-      <h1 className="text-2xl font-bold mb-4">Articles</h1>
-
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button>Ajouter un article</Button>
-        </DialogTrigger>
-
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Nouvel article</DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-3">
-            <Input placeholder="Nom" value={name} onChange={(e) => setName(e.target.value)} />
-            <Input placeholder="SKU" value={sku} onChange={(e) => setSku(e.target.value)} />
-            <Input placeholder="Catégorie" value={category} onChange={(e) => setCategory(e.target.value)} />
-            <Input placeholder="Prix TND" value={price} onChange={(e) => setPrice(e.target.value)} />
-          </div>
-
-          <DialogFooter>
-            <Button onClick={addArticle}>Enregistrer</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <div className="mt-5">
-        {loading ? (
-          <p>Chargement…</p>
-        ) : articles.length === 0 ? (
-          <p>Aucun article pour le moment.</p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {articles.map((a) => (
-              <Card key={a.id}>
-                <CardContent className="p-4">
-                  <h2 className="font-semibold">{a.name}</h2>
-                  <p className="text-sm text-muted-foreground">SKU: {a.sku}</p>
-                  <p className="text-sm">Catégorie : {a.category}</p>
-                  <p className="text-sm">Prix : {a.price_tnd} TND</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-semibold">Articles</h1>
+        <div className="flex gap-2">
+          <Button onClick={loadArticles} variant="outline">
+            Actualiser
+          </Button>
+        </div>
       </div>
+
+      <Card>
+        <CardContent className="p-0">
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="animate-spin" />
+            </div>
+          ) : articles.length === 0 ? (
+            <p className="p-6 text-center text-muted-foreground">Aucun article pour le moment.</p>
+          ) : (
+            <div className="overflow-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>SKU</TableHead>
+                    <TableHead>Nom</TableHead>
+                    <TableHead>Catégorie</TableHead>
+                    <TableHead>Prix (TND)</TableHead>
+                    <TableHead>Créé le</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+
+                <TableBody>
+                  {articles.map((a) => (
+                    <TableRow key={a.id}>
+                      <TableCell>{a.sku}</TableCell>
+                      <TableCell>{a.name}</TableCell>
+                      <TableCell>{a.category ?? "-"}</TableCell>
+                      <TableCell>{typeof a.price_tnd === "number" ? a.price_tnd.toFixed(2) : a.price_tnd} TND</TableCell>
+                      <TableCell>{a.created_at ? new Date(a.created_at).toLocaleString("fr-FR") : "-"}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="inline-flex items-center gap-2">
+                          <Button size="sm" variant="ghost" onClick={() => setEditingArticle(a)}>
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={() => setDeletingArticle(a)}>
+                            <Trash2 className="w-4 h-4 text-destructive" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Edit dialog */}
+      {editingArticle && (
+        <EditArticleDialog
+          article={editingArticle}
+          onClose={() => setEditingArticle(null)}
+          onSaved={onArticleSaved}
+        />
+      )}
+
+      {/* Confirm delete */}
+      {deletingArticle && (
+        <ConfirmDeleteDialog
+          article={deletingArticle}
+          onClose={() => setDeletingArticle(null)}
+          onConfirm={() => handleDeleteConfirmed(deletingArticle.id)}
+        />
+      )}
     </div>
   );
 }

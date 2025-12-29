@@ -132,7 +132,7 @@ L'application est accessible sur `http://localhost:3000`
 
 ```
 Email: admin@storetrack.com
-Mot de passe: Admin123!
+Mot de passe: 123456
 ```
 
 ## 📁 Structure du Projet

@@ -1,9 +1,12 @@
 // backend/server.js
-const db = require("./db");
+const db = require("./config/db");
 const express = require("express");
 const cors = require("cors");
 const app = express();
-
+// ... Imports
+const authRoutes = require('./routes/auth');
+const path = require('path'); // Ajoute ça tout en haut avec les autres require
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Parse JSON bodies
 app.use(express.json());
 
@@ -31,7 +34,11 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// AJOUTE CECI :
+// Permet d'accéder aux images via http://localhost:5000/uploads/mon-image.jpg
+app.use('/uploads', express.static('uploads'));
 // -------------------------------
+
 // Routes
 const articleRoutes = require("./routes/articles");
 app.use("/api/articles", articleRoutes);
@@ -69,6 +76,19 @@ app.use("/api/tickets", require("./routes/tickets"));
 
 // AJOUTE CETTE LIGNE ICI :
 app.use("/api/dashboard", require("./routes/dashboard")); 
+app.use("/api/lots", require("./routes/lots")); 
+
+// Route API Users (CRUD utilisateurs)
+app.use("/api/users", require("./routes/users"));
+
+// ... Routes
+app.use('/api/auth', authRoutes); // Route publique (pas de protection)
+
+// Exemple : Si tu veux protéger les routes Articles, tu ferais :
+// const auth = require('./middleware/auth');
+// app.use('/api/articles', auth, articleRoutes); 
+// (Mais pour l'instant, laisse ouvert le temps de tester le login)
+
 
 // Healthcheck
 app.get("/", (req, res) => {

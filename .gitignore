@@ -1,16 +1,117 @@
-# Node
+# ===================================
+# Node.js & Dependencies
+# ===================================
 node_modules/
-npm-debug.log
-yarn-error.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnpm-debug.log*
+lerna-debug.log*
 
-# Backend
-backend/node_modules/
+# ===================================
+# Environment Variables (CRITICAL)
+# ===================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 backend/.env
-
-# Frontend (plus tard)
-frontend/node_modules/
+backend/.env.local
 frontend/.env
+frontend/.env.local
 
-# System
+# ===================================
+# Build Outputs
+# ===================================
+# Next.js
+frontend/.next/
+frontend/out/
+frontend/build/
+
+# Backend build
+backend/dist/
+backend/build/
+
+# ===================================
+# Uploads & User Files
+# ===================================
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# ===================================
+# Database & Backups
+# ===================================
+*.sql
+*.db
+*.sqlite
+*.sqlite3
+!backend/migrations/*.sql
+
+# ===================================
+# Logs
+# ===================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+backend/logs/
+frontend/logs/
+
+# ===================================
+# IDE & Editors
+# ===================================
+# VSCode
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ===================================
+# OS Files
+# ===================================
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
 Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+
+# ===================================
+# Testing & Coverage
+# ===================================
+coverage/
+.nyc_output/
+*.lcov
+.coverage
+
+# ===================================
+# Temporary Files
+# ===================================
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.cache/
+
+# ===================================
+# Documentation (to keep)
+# ===================================
+# Keep README and important docs
+!README.md
+!CHANGELOG.md
+!LICENSE

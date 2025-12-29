@@ -12,7 +12,10 @@ import {
   Repeat,
   ClipboardList,
   Truck,
-  Ticket
+  Ticket,
+  UserCog,
+  ShoppingCart,
+  Send
 } from "lucide-react"
 
 const menuItems = [
@@ -22,11 +25,12 @@ const menuItems = [
   { name: "Stock", href: "/stock", icon: Package },
   { name: "Suppliers", href: "/suppliers", icon: Truck },
   { name: "Clients", href: "/clients", icon: Users },
-  { name: "Purchase Orders", href: "/purchase-orders", icon: ClipboardList },
-  { name: "Shipments", href: "/shipments", icon: Truck },
+  { name: "Purchase Orders", href: "/purchase-orders", icon: ShoppingCart },
+  { name: "Shipments", href: "/shipments", icon: Send },
   { name: "Transfers", href: "/transfers", icon: Repeat },
   { name: "Internal Requests", href: "/requests", icon: ClipboardList },
   { name: "Tickets", href: "/tickets", icon: Ticket },
+  { name: "Users", href: "/users", icon: UserCog },
 ]
 
 export default function Sidebar() {

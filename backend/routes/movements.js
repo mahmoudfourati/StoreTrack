@@ -1,11 +1,11 @@
 // backend/routes/movements.js
 const express = require("express");
 const router = express.Router();
-const db = require("../db");
+const db = require("../config/db");
 const { createMovement } = require("../services/movementService");
 
 // GET — liste
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   const sql = `
     SELECT m.*, a.name AS article_name,
            w1.name AS from_warehouse,
@@ -16,13 +16,13 @@ router.get("/", (req, res) => {
     LEFT JOIN warehouses w2 ON m.warehouse_to = w2.id
     ORDER BY m.created_at DESC
   `;
-  db.query(sql, (err, results) => {
-    if (err) {
-      console.error("Erreur GET movements :", err);
-      return res.status(500).json({ error: "Erreur serveur" });
-    }
+  try {
+    const [results] = await db.query(sql);
     res.json(results);
-  });
+  } catch (err) {
+    console.error("Erreur GET movements :", err);
+    return res.status(500).json({ error: "Erreur serveur" });
+  }
 });
 
 // POST — create movement (delegates to service)

@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../db");
+const db = require("../config/db");
 
 // ==========================
 // GET all shipment entries
 // ==========================
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   const sql = `
     SELECT se.*, 
            a.name AS article_name,
@@ -20,19 +20,19 @@ router.get("/", (req, res) => {
     ORDER BY se.created_at DESC
   `;
 
-  db.query(sql, (err, rows) => {
-    if (err) {
-      console.error("Erreur GET shipment_entries:", err);
-      return res.status(500).json({ error: "Erreur serveur" });
-    }
+  try {
+    const [rows] = await db.query(sql);
     res.json(rows);
-  });
+  } catch (err) {
+    console.error("Erreur GET shipment_entries:", err);
+    return res.status(500).json({ error: "Erreur serveur" });
+  }
 });
 
 // ==========================
 // GET entries for a single shipment
 // ==========================
-router.get("/:shipment_id", (req, res) => {
+router.get("/:shipment_id", async (req, res) => {
   const shipment_id = req.params.shipment_id;
 
   const sql = `
@@ -50,13 +50,13 @@ router.get("/:shipment_id", (req, res) => {
     ORDER BY se.created_at DESC
   `;
 
-  db.query(sql, [shipment_id], (err, rows) => {
-    if (err) {
-      console.error("Erreur GET shipment_entries by id:", err);
-      return res.status(500).json({ error: "Erreur serveur" });
-    }
+  try {
+    const [rows] = await db.query(sql, [shipment_id]);
     res.json(rows);
-  });
+  } catch (err) {
+    console.error("Erreur GET shipment_entries by id:", err);
+    return res.status(500).json({ error: "Erreur serveur" });
+  }
 });
 
 module.exports = router;

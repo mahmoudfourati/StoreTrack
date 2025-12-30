@@ -174,7 +174,27 @@ Ceci crée un compte admin avec:
 node scripts/seedDatabase.js
 ```
 
+Ce script crée automatiquement:
+- ✅ 6 utilisateurs (admin + 5 employés)
+- ✅ 4 entrepôts (Paris, Lyon, Marseille, Lille)
+- ✅ 5 fournisseurs
+- ✅ 7 clients
+- ✅ 20 articles (Électronique, Alimentation, Pharmaceutique, Bureau)
+- ✅ 5 bons de commande avec totaux
+- ✅ 15 lots avec dates de péremption variées
+- ✅ 15 mouvements de stock
+- ✅ Stocks synchronisés correctement
 
+**Vérification:** Vous devriez voir:
+```
+✅ 6 utilisateurs créés
+✅ 4 entrepôts créés
+✅ 5 fournisseurs créés
+...
+✅ Base de données peuplée avec succès !
+```
+
+---
 
 ### Étape 6: Configuration du Frontend
 
@@ -251,7 +271,9 @@ Mot de passe: Admin123!
 
 Une fois connecté, vous aurez accès à:
 - 📊 **Dashboard** - Vue d'ensemble avec graphiques et KPIs
-- 📦 **Articles** - 20 articles dans 4 catégories
+- 📦 **Inventaire** - 20 articles dans 4 catégories
+- 📤 **Expéditions** - Gestion des sorties avec FEFO
+- 👥 **Clients** - 7 clients enregistrés
 - 🏢 **Entrepôts** - 4 entrepôts configurés
 - 📋 **Stock** - État des stocks par article et entrepôt
 - 🏷️ **Lots** - 15 lots avec dates d'expiration FEFO
@@ -262,6 +284,51 @@ Une fois connecté, vous aurez accès à:
 - ⚙️ **Utilisateurs** - 6 utilisateurs configurés
 
 ---
+
+## 🎯 Vérifications Post-Installation
+
+### ✅ Backend fonctionne correctement
+
+Tester l'API:
+```bash
+curl http://localhost:5000/api/dashboard/stock-valuation
+```
+
+Devrait retourner:
+```json
+{
+  "total_value": "131979.75",
+  "total_quantity": "2025",
+  "total_articles": 20
+}
+```
+
+### ✅ Dashboard affiche des données
+
+- Le graphique montre des mouvements sur 7 jours
+- Les KPIs affichent: Stock total (2025), Articles (20), etc.
+- Les alertes de stock bas apparaissent
+
+### ✅ Page Articles remplie
+
+- 20 articles visibles
+- Catégories: Électronique, Alimentation, Pharmaceutique, Bureau
+- Colonnes "Stock" montrent des quantités (pas de zéros)
+
+### ✅ Page Lots fonctionnelle
+
+- 15 lots affichés
+- Dates d'expiration variées
+- Statut "Actif"
+
+### ✅ Page Rapports opérationnelle
+
+- Valorisation totale affiche: ~131,979 TND
+- Stock total: 2,025 unités
+- 20 articles distincts
+
+---
+
 ## 🔐 Comptes de Démonstration
 
 | Rôle | Email | Mot de passe |

@@ -264,7 +264,7 @@ Aller sur: `http://localhost:3000`
 Page de connexion - Utiliser:
 ```
 Email: admin@storetrack.com
-Mot de passe: Admin123!
+Mot de passe: 123456
 ```
 
 **8.3 Explorer les pages**

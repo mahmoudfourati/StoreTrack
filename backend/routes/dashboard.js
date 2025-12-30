@@ -125,9 +125,9 @@ router.get('/stock-valuation', async (req, res) => {
         `);
         
         res.json({
-            totalValue: result[0].totalValue || 0,
-            totalQuantity: result[0].totalQuantity || 0,
-            totalArticles: result[0].totalArticles || 0
+            total_value: result[0].totalValue || 0,
+            total_quantity: result[0].totalQuantity || 0,
+            total_articles: result[0].totalArticles || 0
         });
     } catch (error) {
         console.error('Erreur stock valuation:', error);

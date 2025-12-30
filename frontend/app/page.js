@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import api from "@/lib/axios";
 import { 
   Package, 
@@ -25,14 +26,22 @@ import {
 } from 'recharts';
 
 export default function Dashboard() {
+  const router = useRouter();
   const [stats, setStats] = useState(null);
   const [chartData, setChartData] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check if user is authenticated
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+    setLoading(true);
     fetchDashboardData();
-  }, []);
+  }, [router]);
 
   const fetchDashboardData = async () => {
     try {

@@ -27,12 +27,12 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    if (token) {
+    if (!token && pathname !== "/login") {
+      router.push("/login");
+      setLoading(false);
+    } else if (token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    } else {
-      if (pathname !== "/login") {
-        router.push("/login");
-      }
+      setLoading(false);
     }
   }, [pathname, router]);
 

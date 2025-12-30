@@ -22,7 +22,9 @@ import {
   Sun,
   PackageX,
   ScanBarcode,
-  ShoppingCart
+  ShoppingCart,
+  UserCircle,
+  Send
 } from "lucide-react";
 import { useAuth } from "@/lib/authContext";
 import { useTheme } from "@/lib/themeContext";
@@ -36,13 +38,15 @@ const menuItems = [
   { name: "Scanner", href: "/scanner", icon: ScanBarcode },
   { name: "Mouvements", href: "/movements", icon: ArrowRightLeft },
   { name: "Commandes d'Achat", href: "/purchase-orders", icon: ShoppingCart },
+  { name: "Expéditions", href: "/shipments", icon: Send },
   { name: "Entrepôts", href: "/warehouses", icon: Warehouse },
+  { name: "Clients", href: "/clients", icon: UserCircle },
+  { name: "Fournisseurs", href: "/suppliers", icon: Truck },
   { name: "Rapports", href: "/reports", icon: BarChart3 },
   { name: "Inventaire Physique", href: "/inventory", icon: ClipboardCheck },
   { name: "Alertes Lots", href: "/lots", icon: PackageX },
   { name: "Commandes int.", href: "/requests", icon: FileText },
   { name: "Alertes & Incidents", href: "/tickets", icon: AlertTriangle },
-  { name: "Fournisseurs", href: "/suppliers", icon: Truck },
   { name: "Utilisateurs", href: "/users", icon: Users },
   { name: "Paramètres", href: "/settings", icon: Settings },
 ];
